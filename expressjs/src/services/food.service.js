@@ -1,3 +1,5 @@
+import { prisma } from "../common/prisma/generated/connect.prisma.js";
+
 export const foodService = {
   async create(req) {
     return `This action create`;

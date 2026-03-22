@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/common/prisma/generated/prisma"
@@ -10,4 +5,92 @@ generator client {
 
 datasource db {
   provider = "mysql"
+}
+
+model Food {
+  id        Int        @id @default(autoincrement())
+  food_Name String?    @db.VarChar(255)
+  image     String?    @db.VarChar(255)
+  price     Float?     @db.Float
+  desc      String?    @db.VarChar(255)
+  type_id   Int?
+  Food_type Food_type? @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Food_ibfk_1")
+  Order     Order[]
+  Sub_food  Sub_food[]
+
+  @@index([type_id], map: "type_id")
+}
+
+model Food_type {
+  id        Int     @id @default(autoincrement())
+  type_name String? @db.VarChar(255)
+  Food      Food[]
+}
+
+model Like_res {
+  id         Int         @id @default(autoincrement())
+  user_id    Int?
+  res_id     Int?
+  date_like  DateTime?   @db.DateTime(0)
+  User       User?       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Like_res_ibfk_1")
+  Restaurant Restaurant? @relation(fields: [res_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Like_res_ibfk_2")
+
+  @@index([res_id], map: "res_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Order {
+  id         Int     @id @default(autoincrement())
+  user_id    Int?
+  food_id    Int?
+  amount     Int?
+  code       String? @db.VarChar(255)
+  arr_sub_id String? @db.VarChar(255)
+  User       User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Order_ibfk_1")
+  Food       Food?   @relation(fields: [food_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Order_ibfk_2")
+
+  @@index([food_id], map: "food_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Rate_res {
+  id         Int         @id @default(autoincrement())
+  user_id    Int?
+  res_id     Int?
+  amount     Int?
+  date_res   DateTime?   @db.DateTime(0)
+  User       User?       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Rate_res_ibfk_1")
+  Restaurant Restaurant? @relation(fields: [res_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Rate_res_ibfk_2")
+
+  @@index([res_id], map: "res_id")
+  @@index([user_id], map: "user_id")
+}
+
+model Restaurant {
+  id       Int        @id @default(autoincrement())
+  res_Name String?    @db.VarChar(255)
+  image    String?    @db.VarChar(255)
+  desc     String?    @db.VarChar(255)
+  Like_res Like_res[]
+  Rate_res Rate_res[]
+}
+
+model Sub_food {
+  id        Int     @id @default(autoincrement())
+  sub_name  String? @db.VarChar(255)
+  sub_price Float?  @db.Float
+  food_id   Int?
+  Food      Food?   @relation(fields: [food_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Sub_food_ibfk_1")
+
+  @@index([food_id], map: "food_id")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  fullName String?    @db.VarChar(255)
+  email    String     @unique(map: "email") @db.VarChar(255)
+  password String?    @db.VarChar(255)
+  Like_res Like_res[]
+  Order    Order[]
+  Rate_res Rate_res[]
 }
