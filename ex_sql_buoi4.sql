@@ -174,4 +174,3 @@ WHERE `Order`.`user_id` IS NULL AND `Like_res`.`user_id` IS NULL AND `Rate_res`.
 
 
 
-

@@ -3,6 +3,7 @@ import rootRouter from "./src/routers/root.router.js";
 
 
 const app = express();
+app.use(express.json());
 
 app.use("/api", rootRouter);
 
